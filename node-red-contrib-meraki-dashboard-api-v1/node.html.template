@@ -1,0 +1,390 @@
+<script type="text/javascript">
+(function () {
+    // Endpoint definitions loaded inline (generated from endpoints.json)
+    var endpoints = ENDPOINTS_PLACEHOLDER;
+
+    // Build lookup structures
+    var endpointMap = {};
+    var bodyExamples = {};
+    endpoints.forEach(function (ep) {
+        endpointMap[ep.operationId] = ep;
+        if (ep.bodyExample) {
+            bodyExamples[ep.operationId] = ep.bodyExample;
+        }
+    });
+
+    // Build method groups from endpoints
+    function buildMethodGroups() {
+        return endpoints.map(function (ep) {
+            return {
+                methodTags: ep.tags || [],
+                methodName: ep.operationId,
+                parameters: ep.params || [],
+                summary: ep.summary || ep.operationId,
+                path: ep.path
+            };
+        });
+    }
+
+    // Get unique tag values at a given level
+    function getTagsAtLevel(level, filterTags) {
+        var tags = new Set();
+        endpoints.forEach(function (ep) {
+            if (!ep.tags || ep.tags.length <= level) return;
+            var match = true;
+            for (var i = 0; i < level && i < filterTags.length; i++) {
+                if (filterTags[i] && ep.tags[i] !== filterTags[i]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                tags.add(ep.tags[level]);
+            }
+        });
+        return Array.from(tags).sort();
+    }
+
+    // Filter endpoints by selected tags
+    function filterRequestsByTags(selectedTags, allEndpoints) {
+        return allEndpoints.filter(function (ep) {
+            var epTags = ep.methodTags || ep.tags || [];
+            for (var i = 0; i < selectedTags.length; i++) {
+                if (selectedTags[i] && epTags[i] !== selectedTags[i]) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
+    // Generate form HTML for a method's parameters
+    function generateFormHtml(endpoint) {
+        var formHtml = '';
+        if (!endpoint.params || endpoint.params.length === 0) return formHtml;
+
+        formHtml += '<h4>Parameters</h4>';
+
+        endpoint.params.forEach(function (param) {
+            var paramId = endpoint.operationId + '_' + param.name;
+            var requiredMark = param.required ? ' <span style="color:red;"> *</span>' : '';
+            var paramType = param.type || 'string';
+
+            formHtml += '<div class="form-row" id="' + paramId + '">';
+            formHtml += '<label for="node-input-' + paramId + '" style="width:70%">';
+            formHtml += '<i class="fa fa-list"></i> <span><b>' + param.name + requiredMark + '</b> <i>&nbsp;' + paramType + '</i></span></label>';
+            formHtml += '<p></p>';
+
+            if (param.in === 'body') {
+                formHtml += '<input type="text" id="node-input-' + paramId + '" placeholder="msg.payload" style="width:70%">';
+            } else {
+                formHtml += '<input type="text" id="node-input-' + paramId + '" placeholder="msg.' + param.name + '" style="width:70%">';
+            }
+
+            formHtml += '<input type="hidden" id="node-input-' + paramId + 'Type" value="' + paramType + '">';
+            formHtml += '</div>';
+        });
+
+        // Add body example if available
+        if (bodyExamples[endpoint.operationId]) {
+            formHtml += '<h5>Body Example</h5>';
+            formHtml += '<pre><code>' + JSON.stringify(bodyExamples[endpoint.operationId], null, 4) + '</code></pre>';
+        }
+
+        return formHtml;
+    }
+
+    RED.nodes.registerType('meraki-dashboard-api-v1', {
+        category: 'Cisco Meraki',
+        color: '#67b346',
+        defaults: {
+            service: { value: "", type: "meraki-dashboard-api-v1-service", required: true },
+            name: { value: "" },
+            selectedGroupA: { value: "" },
+            selectedGroupB: { value: "" },
+            selectedGroupC: { value: "" },
+            selectedMethod: { value: "" },
+            filteredMethods: [],
+            currentParams: [{ value: "" }],
+            storedParams: [{ value: "" }],
+            method: { value: "", required: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'icon.png',
+        label: function () {
+            return this.name || "Meraki Dashboard API v1";
+        },
+        oneditsave: function () {
+            var node = this;
+
+            // Set the default name of the Node, if not already defined
+            if (!node.name) {
+                node.name = $('#node-input-method').val();
+                $('#node-input-name').val(node.name);
+            }
+
+            // Save form parameters
+            node.storedParams = node.currentParams;
+        },
+        oneditprepare: function () {
+            var node = this;
+            var methodGroups = buildMethodGroups();
+
+            // --- Selector A (first-level tags) ---
+            var generateSelectorA = function () {
+                $('#node-input-group-a').empty();
+                $('#node-input-group-a').append('<option value="">-- Select Category --</option>');
+                var tagsA = getTagsAtLevel(0, []);
+                tagsA.forEach(function (tag) {
+                    $('#node-input-group-a').append('<option value="' + tag + '">' + tag + '</option>');
+                });
+                if (node.selectedGroupA) {
+                    $('#node-input-group-a').val(node.selectedGroupA);
+                }
+            };
+
+            // --- Selector B (second-level tags) ---
+            var generateSelectorB = function () {
+                $('#node-input-group-b').empty();
+                $('#node-input-group-b').append('<option value="">-- Select Sub-Category --</option>');
+                var tagsB = getTagsAtLevel(1, [node.selectedGroupA]);
+                tagsB.forEach(function (tag) {
+                    $('#node-input-group-b').append('<option value="' + tag + '">' + tag + '</option>');
+                });
+                if (node.selectedGroupB) {
+                    $('#node-input-group-b').val(node.selectedGroupB);
+                }
+            };
+
+            // --- Selector C (third-level tags) ---
+            var generateSelectorC = function () {
+                $('#node-input-group-c').empty();
+                $('#node-input-group-c').append('<option value="">-- All --</option>');
+                var tagsC = getTagsAtLevel(2, [node.selectedGroupA, node.selectedGroupB]);
+                tagsC.forEach(function (tag) {
+                    $('#node-input-group-c').append('<option value="' + tag + '">' + tag + '</option>');
+                });
+                if (node.selectedGroupC) {
+                    $('#node-input-group-c').val(node.selectedGroupC);
+                }
+            };
+
+            // --- Filter and populate method selector ---
+            var filterMethods = function () {
+                $('#node-input-method').empty();
+                var selectedTags = [
+                    node.selectedGroupA,
+                    node.selectedGroupB,
+                    node.selectedGroupC
+                ];
+                node.filteredMethods = filterRequestsByTags(selectedTags, methodGroups);
+
+                node.filteredMethods.forEach(function (m) {
+                    $('#node-input-method').append('<option value="' + m.methodName + '">' + m.methodName + '</option>');
+                });
+
+                var methods = $('#node-input-method').children();
+                var firstMethod = methods.first();
+                $('#node-input-method').val(firstMethod.val()).change();
+            };
+
+            // --- Initialize selectors ---
+            generateSelectorA();
+            generateSelectorB();
+            generateSelectorC();
+
+            // Load filtered methods
+            if (!node.filteredMethods) {
+                node.filteredMethods = [];
+            }
+
+            node.filteredMethods.forEach(function (m) {
+                $('#node-input-method').append('<option value="' + m.methodName + '">' + m.methodName + '</option>');
+            });
+
+            // Set current method selection
+            if (node.selectedMethod) {
+                $('#node-input-method').val(node.selectedMethod);
+            }
+
+            // --- Event handlers ---
+            $('#node-input-group-a').change(function () {
+                node.selectedGroupA = $(this).val();
+                node.selectedGroupB = '';
+                node.selectedGroupC = '';
+                generateSelectorB();
+                generateSelectorC();
+                filterMethods();
+            });
+
+            $('#node-input-group-b').change(function () {
+                node.selectedGroupB = $(this).val();
+                node.selectedGroupC = '';
+                generateSelectorC();
+                filterMethods();
+            });
+
+            $('#node-input-group-c').change(function () {
+                node.selectedGroupC = $(this).val();
+                filterMethods();
+            });
+
+            // --- Method selection change ---
+            $('#node-input-method').change(function () {
+                node.selectedMethod = $(this).val();
+                var endpoint = endpointMap[node.selectedMethod];
+                if (!endpoint) return;
+
+                // Update summary
+                $('#method-summary').empty();
+                $('#method-summary').append('<div><p><i>' + endpoint.summary + '</i></p></div>');
+                $('#method-path').empty();
+                $('#method-path').append('<div><p><code>' + endpoint.method + ' ' + endpoint.path + '</code></p></div>');
+
+                // Generate and display form
+                var formHtml = generateFormHtml(endpoint);
+                $('#method-params-form').empty();
+                $('#method-params-form').append(formHtml);
+
+                // Populate stored values into form fields
+                node.currentParams = [];
+                if (endpoint.params) {
+                    endpoint.params.forEach(function (param) {
+                        var paramId = endpoint.operationId + '_' + param.name;
+                        var storedVal = '';
+                        var storedType = 'str';
+
+                        // Check if we have a stored value for this param
+                        if (node.storedParams) {
+                            node.storedParams.forEach(function (sp) {
+                                if (sp.camelCaseName === param.name) {
+                                    storedVal = sp.value || '';
+                                    storedType = sp.type || 'str';
+                                }
+                            });
+                        }
+
+                        $('#node-input-' + paramId).val(storedVal);
+
+                        node.currentParams.push({
+                            camelCaseName: param.name,
+                            value: storedVal,
+                            type: storedType
+                        });
+
+                        // Bind change event to update currentParams
+                        $('#node-input-' + paramId).on('change keyup', function () {
+                            var val = $(this).val();
+                            var existing = node.currentParams.find(function (p) { return p.camelCaseName === param.name; });
+                            if (existing) {
+                                existing.value = val;
+                            }
+                        });
+                    });
+                }
+            });
+
+            // Trigger initial method selection if we have one
+            if (node.selectedMethod) {
+                $('#node-input-method').trigger('change');
+            }
+        }
+    });
+
+    RED.nodes.registerType('meraki-dashboard-api-v1-service', {
+        category: 'config',
+        defaults: {
+            host: { value: "https://api.meraki.com/api/v1", required: true },
+            secureApiKeyHeaderOrQueryName: { value: "X-Cisco-Meraki-API-Key" },
+            secureApiKeyIsQuery: { value: false }
+        },
+        credentials: {
+            secureApiKeyValue: { type: 'password' },
+            temp: { type: 'text' }
+        },
+        label: function () {
+            return this.host || "Meraki API Service";
+        }
+    });
+})();
+</script>
+
+<script type="text/html" data-template-name="meraki-dashboard-api-v1">
+    <div class="form-row">
+        <label for="node-input-service"><i class="fa fa-cloud"></i> Service</label>
+        <input type="text" id="node-input-service">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <hr/>
+    <div class="form-row">
+        <label for="node-input-group-a"><i class="fa fa-filter"></i> Category</label>
+        <select id="node-input-group-a" style="width:70%"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-group-b"><i class="fa fa-filter"></i> Sub-Category</label>
+        <select id="node-input-group-b" style="width:70%"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-group-c"><i class="fa fa-filter"></i> Filter</label>
+        <select id="node-input-group-c" style="width:70%"></select>
+    </div>
+    <hr/>
+    <div class="form-row">
+        <label for="node-input-method"><i class="fa fa-bolt"></i> Method</label>
+        <select id="node-input-method" style="width:70%"></select>
+    </div>
+    <div id="method-summary"></div>
+    <div id="method-path"></div>
+    <hr/>
+    <div id="method-params-form"></div>
+</script>
+
+<script type="text/html" data-template-name="meraki-dashboard-api-v1-service">
+    <div class="form-row">
+        <label for="node-input-host"><i class="fa fa-globe"></i> API URL</label>
+        <input type="text" id="node-input-host" placeholder="https://api.meraki.com/api/v1">
+    </div>
+    <div class="form-row">
+        <label for="node-input-secureApiKeyHeaderOrQueryName"><i class="fa fa-key"></i> Header Name</label>
+        <input type="text" id="node-input-secureApiKeyHeaderOrQueryName" placeholder="X-Cisco-Meraki-API-Key">
+    </div>
+    <div class="form-row">
+        <label for="node-input-secureApiKeyValue"><i class="fa fa-lock"></i> API Key</label>
+        <input type="password" id="node-input-secureApiKeyValue" placeholder="API Key">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="meraki-dashboard-api-v1">
+    <p>A Node-RED node to interact with the Cisco Meraki Dashboard API v1.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>For POST/PUT methods, the request body as a JSON object.</dd>
+        <dt>service <span class="property-type">object</span></dt>
+        <dd>Optional. Override the API host and/or API key:
+            <code>{ host: "https://...", apiKey: "..." }</code></dd>
+        <dt>operationId <span class="property-type">string</span></dt>
+        <dd>Optional. Override the method/operationId to call dynamically.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>The API response body.</dd>
+        <dt>statusCode <span class="property-type">number</span></dt>
+        <dd>The HTTP status code.</dd>
+        <dt>headers <span class="property-type">object</span></dt>
+        <dd>The response headers.</dd>
+        <dt>responseUrl <span class="property-type">string</span></dt>
+        <dd>The final URL after redirects.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p>Select an API method from the dropdown, fill in the required parameters,
+    and send a message to trigger the API call. Parameters can be set in the node
+    configuration or passed via the incoming message properties.</p>
+    <p>For methods that require a request body (POST/PUT), pass the body as
+    <code>msg.payload</code> (JSON object).</p>
+</script>
