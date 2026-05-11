@@ -1,5 +1,5 @@
 /**
- * Downloads the latest Meraki OpenAPI spec from GitHub and generates
+ * Downloads the latest Meraki OpenAPI spec (v3) from GitHub and generates
  * an updated endpoints.json with all available API endpoints.
  * 
  * Usage: node update_from_openapi.js
@@ -8,12 +8,12 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const SPEC_URL = 'https://raw.githubusercontent.com/meraki/openapi/master/openapi/spec2.json';
+const SPEC_URL = 'https://raw.githubusercontent.com/meraki/openapi/master/openapi/spec3.json';
 const OUTPUT_PATH = path.join(__dirname, 'endpoints.json');
 
 function download(url) {
     return new Promise((resolve, reject) => {
-        console.log('Downloading OpenAPI spec...');
+        console.log('Downloading OpenAPI 3.0 spec...');
         let data = '';
         https.get(url, (res) => {
             if (res.statusCode !== 200) {
@@ -26,68 +26,62 @@ function download(url) {
     });
 }
 
-function camelCase(str) {
-    return str.replace(/[-_](.)/g, (_, c) => c.toUpperCase());
-}
-
 function parseSpec(specJson) {
     const spec = JSON.parse(specJson);
-    console.log('API Version:', spec.info.version);
+    console.log('OpenAPI version:', spec.openapi);
+    console.log('API version:', spec.info.version);
     console.log('Parsing paths...');
 
     const endpoints = [];
 
     for (const [pathStr, pathObj] of Object.entries(spec.paths)) {
         for (const [method, operation] of Object.entries(pathObj)) {
-            // Skip non-HTTP-method keys like "parameters"
+            // Skip non-HTTP-method keys (e.g. shared "parameters")
             if (!['get', 'post', 'put', 'delete', 'patch'].includes(method)) continue;
 
             const operationId = operation.operationId;
             if (!operationId) continue;
 
-            // Extract parameters
+            // Extract path and query parameters
             const params = [];
             if (operation.parameters) {
                 for (const param of operation.parameters) {
-                    if (param.in === 'path') {
+                    if (param.in === 'path' || param.in === 'query') {
+                        // In OpenAPI 3, type is nested inside "schema"
+                        const paramType = (param.schema && param.schema.type) || 'string';
                         params.push({
                             name: param.name,
-                            in: 'path',
-                            type: param.type || 'string',
-                            required: true
-                        });
-                    } else if (param.in === 'query') {
-                        params.push({
-                            name: param.name,
-                            in: 'query',
-                            type: param.type || 'string',
-                            required: param.required || false
-                        });
-                    } else if (param.in === 'body') {
-                        params.push({
-                            name: param.name || operationId,
-                            in: 'body',
-                            type: 'object',
-                            required: param.required || false
+                            in: param.in,
+                            type: paramType,
+                            required: param.in === 'path' ? true : (param.required || false)
                         });
                     }
                 }
             }
 
-            // Extract tags
-            const tags = operation.tags || [];
-
-            // Extract summary/description
-            const summary = operation.summary || operation.description || operationId;
-
-            // Extract body example from the parameter schema examples
+            // Extract request body (OpenAPI 3 uses "requestBody" instead of in-body parameters)
             let bodyExample = undefined;
-            if (operation.parameters) {
-                const bodyParam = operation.parameters.find(p => p.in === 'body');
-                if (bodyParam && bodyParam.schema && bodyParam.schema.example) {
-                    bodyExample = bodyParam.schema.example;
+            if (operation.requestBody) {
+                const content = operation.requestBody.content;
+                const jsonContent = content && content['application/json'];
+
+                // Add a body parameter entry
+                params.push({
+                    name: operationId,
+                    in: 'body',
+                    type: 'object',
+                    required: operation.requestBody.required || false
+                });
+
+                // Extract example from schema if available
+                if (jsonContent && jsonContent.schema && jsonContent.schema.example) {
+                    bodyExample = jsonContent.schema.example;
                 }
             }
+
+            // Extract tags and summary
+            const tags = operation.tags || [];
+            const summary = operation.summary || operation.description || operationId;
 
             const endpoint = {
                 operationId,
@@ -139,7 +133,7 @@ async function main() {
         console.log('By method:', JSON.stringify(methods));
         console.log('Written to: ' + OUTPUT_PATH);
 
-        // Compare with previous
+        // Compare with previous if a backup exists
         const prevPath = OUTPUT_PATH + '.bak';
         if (fs.existsSync(prevPath)) {
             const prev = JSON.parse(fs.readFileSync(prevPath, 'utf8'));
