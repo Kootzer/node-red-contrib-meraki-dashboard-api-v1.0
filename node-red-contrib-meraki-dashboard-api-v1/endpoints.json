@@ -120,18 +120,6 @@
         "required": true
       },
       {
-        "name": "startDate",
-        "in": "query",
-        "type": "string",
-        "required": false
-      },
-      {
-        "name": "endDate",
-        "in": "query",
-        "type": "string",
-        "required": false
-      },
-      {
         "name": "statuses",
         "in": "query",
         "type": "array",
@@ -151,6 +139,18 @@
       },
       {
         "name": "name",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "startDate",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "endDate",
         "in": "query",
         "type": "string",
         "required": false
@@ -24264,6 +24264,12 @@
       },
       {
         "name": "boundaryIds",
+        "in": "query",
+        "type": "array",
+        "required": true
+      },
+      {
+        "name": "ranges",
         "in": "query",
         "type": "array",
         "required": true
