@@ -2,52 +2,7 @@
 
 A [Node-RED](https://nodered.org/) node for interacting with the [Cisco Meraki Dashboard API v1](https://developer.cisco.com/meraki/api-v1/).
 
-This node provides access to **933 API endpoints** covering the full Meraki Dashboard API v1.70.0, including devices, networks, organizations, appliances, switches, wireless, cameras, sensors, and more.
-
-Forked and updated from [Cory Guynn's original repo](https://github.com/dexterlabora/node-red-contrib-meraki-dashboard-api-v1).
-
-## Changes
-
-The complete list of changes from the original source:
-
-### Architecture & Code
-
-- Replaced 505 individual hand-written prototype methods in `lib.js` (18,564 lines) with a single generic `callEndpoint(operationId, parameters)` method (182 lines)
-- Replaced the massive `if/else` chain in `node.js` (26,009 lines) with a generic parameter resolution loop that works for any endpoint (179 lines)
-- Replaced the per-endpoint inline HTML generation in `node.html` (47,319 lines) with a dynamic UI that builds forms from endpoint definitions at runtime (349 lines of template)
-- Extracted all API endpoint definitions into a declarative `endpoints.json` data file (operationId, HTTP method, path, parameters, tags, summaries, body examples)
-- Total code reduction: ~91,900 lines → ~710 lines (99.2% reduction)
-
-### New Files Added
-
-- `endpoints.json` — Declarative definition of all API endpoints (now 933, up from around 500)
-- `node.html.template` — Template file with `ENDPOINTS_PLACEHOLDER` marker used by the build script
-- `build.js` — Build script that injects `endpoints.json` into the HTML template to produce `node.html`
-- `update_from_openapi.js` — Script that downloads the latest Meraki OpenAPI spec from GitHub and regenerates `endpoints.json`
-
-### API Coverage
-
-- Updated from Meraki API v1.14.0 (500~ endpoints) to v1.70.0 (933 endpoints)
-- Added over 400 new API endpoints across all product categories (sensor, secure connect, cloud monitoring, live tools, adaptive policy, etc.)
-- GET: 502, PUT: 186, POST: 174, DELETE: 71
-
-### Package Metadata
-
-- Bumped package version from 1.14.0 to 2.0.0
-- Updated description to reflect the new API version and endpoint count
-
-### LICENSE File
-
-- Replaced the placeholder text ("Apache-2.0") with the full Apache License 2.0 legal text
-
-### What Stayed the Same
-
-- Node type names (`meraki-dashboard-api-v1`, `meraki-dashboard-api-v1-service`) — existing flows won't break
-- Message interface (`msg.payload`, `msg.statusCode`, `msg.headers`, `msg.responseUrl`) — fully backward compatible
-- Configuration node structure (host, API key, header name) — existing credentials carry over
-- Parameter resolution behavior (stored params, msg properties, type checking) — same logic, just generic
-- Dependencies (`request`, `q`, `file-type`) — unchanged for compatibility
-
+This node provides access to **933 API endpoints** covering the full Meraki Dashboard API v1.70.0, including devices, networks, organizations, appliances, switches, wireless, cameras, sensors, and more. All endpoints utilize OpenAPI Specification version 3, pulled directly from Meraki's [spec3.json](https://raw.githubusercontent.com/meraki/openapi/master/openapi/spec3.json) file from GitHub.
 
 ## Features
 
