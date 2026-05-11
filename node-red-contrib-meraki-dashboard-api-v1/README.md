@@ -2,7 +2,7 @@
 
 A [Node-RED](https://nodered.org/) node for interacting with the [Cisco Meraki Dashboard API v1](https://developer.cisco.com/meraki/api-v1/).
 
-This node provides access to **933 API endpoints** covering the full Meraki Dashboard API v1.70.0, including devices, networks, organizations, appliances, switches, wireless, cameras, sensors, and more.
+This node provides access to **933 API endpoints** covering the full Meraki Dashboard API v1.70.0, including devices, networks, organizations, appliances, switches, wireless, cameras, sensors, and more. All endpoints utilize OpenAPI Specification version 3, pulled directly from Meraki's [spec3.json](https://raw.githubusercontent.com/meraki/openapi/master/openapi/spec3.json) file from GitHub.
 
 ## Features
 
