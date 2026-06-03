@@ -147,10 +147,9 @@ Then run `node build.js` and restart Node-RED.
 
 - [Meraki Dashboard API Documentation](https://developer.cisco.com/meraki/api-v1/)
 - [Meraki API Changelog](https://developer.cisco.com/meraki/whats-new/)
-- [Meraki OpenAPI Spec (GitHub)](https://github.com/meraki/openapi)
-- [Meraki Developer Community](https://community.meraki.com/t5/Developers-Meraki-Integrations/bd-p/api)
+- [Meraki OpenAPI Spec (GitHub)](https://github.com/meraki/openapi/)
+- [Meraki Developer Community](https://developer.cisco.com/docs/)
 - [Node-RED Documentation](https://nodered.org/docs/)
-- [Creating Node-RED Nodes](https://nodered.org/docs/creating-nodes/)
 
 ## License
 
@@ -161,6 +160,6 @@ See the [LICENSE](https://github.com/bakerdist/Node-Red-Meraki-Dashboard-API-v1.
 ## Credits
 
 Originally created by [Cory Guynn](https://github.com/dexterlabora).
-Updated and maintained by [Austin Kutzer](https://github.com/AustinKutzer).
+Updated and maintained by [Austin Kutzer](https://github.com/Kootzer).
 
 The Meraki Dashboard API is developed and maintained by [Cisco Meraki](https://www.meraki.com). This node is a community project and is not officially supported by Cisco.
