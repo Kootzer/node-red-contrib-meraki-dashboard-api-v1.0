@@ -187,13 +187,11 @@ module.exports = function (RED) {
     function MerakiDashboardApiServiceNode(n) {
         RED.nodes.createNode(this, n);
         this.host = n.host;
-        this.secureApiKeyValue = n.secureApiKeyValue;
         this.secureApiKeyHeaderOrQueryName = n.secureApiKeyHeaderOrQueryName;
         this.secureApiKeyIsQuery = n.secureApiKeyIsQuery;
     }
 
     RED.nodes.registerType('meraki-dashboard-api-v1-service', MerakiDashboardApiServiceNode, {
-        host: { type: 'text' },
         credentials: {
             secureApiKeyValue: { type: 'password' },
             temp: { type: 'text' }
