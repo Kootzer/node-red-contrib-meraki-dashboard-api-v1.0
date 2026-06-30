@@ -61,30 +61,68 @@ See the [Meraki API documentation](https://developer.cisco.com/meraki/api-v1/aut
 | `msg.headers` | object | Response headers |
 | `msg.responseUrl` | string | Final URL after redirects |
 
-### Example Flow
+### Example Flow to Return API User
 
 ```json
 [
     {
-        "id": "example1",
+        "id": "trigger",
         "type": "inject",
-        "name": "Get Org Devices",
+        "name": "Who am I?",
         "props": [
-            { "p": "organizationId", "v": "YOUR_ORG_ID", "vt": "str" }
+            {
+                "p": "payload"
+            }
         ],
-        "wires": [["meraki1"]]
+		"repeat": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 590,
+        "y": 600,
+        "wires": [
+            [
+                "merakiExample"
+            ]
+        ]
     },
     {
-        "id": "meraki1",
+        "id": "merakiExample",
         "type": "meraki-dashboard-api-v1",
-        "name": "getOrganizationDevices",
-        "method": "getOrganizationDevices",
-        "wires": [["debug1"]]
+        "name": "getAdministeredIdentitiesMe",
+        "selectedGroupA": "administered",
+        "selectedGroupB": "monitor",
+        "selectedGroupC": "identities",
+        "selectedMethod": "getAdministeredIdentitiesMe",
+        "filteredMethods": [
+            {
+                "methodTags": [
+                    "administered",
+                    "monitor",
+                    "identities",
+                    "me"
+                ],
+                "methodName": "getAdministeredIdentitiesMe",
+                "parameters": [],
+                "summary": "Returns the identity of the current user.",
+                "path": "/administered/identities/me"
+            }
+        ],
+        "x": 790,
+        "y": 600,
+        "wires": [
+            [
+                "debugExample"
+            ]
+        ]
     },
     {
-        "id": "debug1",
+        "id": "debugExample",
         "type": "debug",
-        "name": "Output"
+        "name": "Output",
+        "active": true,
+        "x": 980,
+        "y": 600,
+        "wires": []
     }
 ]
 ```
