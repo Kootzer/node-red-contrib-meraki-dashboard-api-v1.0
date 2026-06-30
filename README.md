@@ -199,6 +199,6 @@ See the [LICENSE](https://github.com/bakerdist/Node-Red-Meraki-Dashboard-API-v1.
 ## Credits
 
 Originally created by [Cory Guynn](https://github.com/dexterlabora).
-Updated and maintained by [Austin Kutzer](https://github.com/AustinKutzer).
+Updated and maintained by [Austin Kutzer](https://github.com/Kootzer).
 
 The Meraki Dashboard API is developed and maintained by [Cisco Meraki](https://www.meraki.com). This node is a community project and is not officially supported by Cisco.
