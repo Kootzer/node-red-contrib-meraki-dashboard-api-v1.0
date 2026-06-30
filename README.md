@@ -1,10 +1,8 @@
 # node-red-contrib-meraki-dashboard-api-v1.0
 
-[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/Kootzer/node-red-contrib-meraki-dashboard-api-v1.0)
-
 A [Node-RED](https://nodered.org/) node for interacting with the [Cisco Meraki Dashboard API v1](https://developer.cisco.com/meraki/api-v1/).
 
-This node provides access to **933 API endpoints** covering the full Meraki Dashboard API v1.70.0, including devices, networks, organizations, appliances, switches, wireless, cameras, sensors, and more. All endpoints utilize OpenAPI Specification version 3, pulled directly from Meraki's [spec3.json](https://raw.githubusercontent.com/meraki/openapi/master/openapi/spec3.json) file from GitHub.
+This node provides access to **898 API endpoints** covering the full Meraki Dashboard API v1.71.0, including devices, networks, organizations, appliances, switches, wireless, cameras, sensors, and more. All endpoints utilize OpenAPI Specification version 3, pulled directly from Meraki's [spec3.json](https://raw.githubusercontent.com/meraki/openapi/master/openapi/spec3.json) file from GitHub.
 
 ## Features
 
@@ -63,68 +61,30 @@ See the [Meraki API documentation](https://developer.cisco.com/meraki/api-v1/aut
 | `msg.headers` | object | Response headers |
 | `msg.responseUrl` | string | Final URL after redirects |
 
-### Example Flow to Return API User
+### Example Flow
 
 ```json
 [
     {
-        "id": "trigger",
+        "id": "example1",
         "type": "inject",
-        "name": "Who am I?",
+        "name": "Get Org Devices",
         "props": [
-            {
-                "p": "payload"
-            }
+            { "p": "organizationId", "v": "YOUR_ORG_ID", "vt": "str" }
         ],
-		"repeat": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 590,
-        "y": 600,
-        "wires": [
-            [
-                "merakiExample"
-            ]
-        ]
+        "wires": [["meraki1"]]
     },
     {
-        "id": "merakiExample",
+        "id": "meraki1",
         "type": "meraki-dashboard-api-v1",
-        "name": "getAdministeredIdentitiesMe",
-        "selectedGroupA": "administered",
-        "selectedGroupB": "monitor",
-        "selectedGroupC": "identities",
-        "selectedMethod": "getAdministeredIdentitiesMe",
-        "filteredMethods": [
-            {
-                "methodTags": [
-                    "administered",
-                    "monitor",
-                    "identities",
-                    "me"
-                ],
-                "methodName": "getAdministeredIdentitiesMe",
-                "parameters": [],
-                "summary": "Returns the identity of the current user.",
-                "path": "/administered/identities/me"
-            }
-        ],
-        "x": 790,
-        "y": 600,
-        "wires": [
-            [
-                "debugExample"
-            ]
-        ]
+        "name": "getOrganizationDevices",
+        "method": "getOrganizationDevices",
+        "wires": [["debug1"]]
     },
     {
-        "id": "debugExample",
+        "id": "debug1",
         "type": "debug",
-        "name": "Output",
-        "active": true,
-        "x": 980,
-        "y": 600,
-        "wires": []
+        "name": "Output"
     }
 ]
 ```
@@ -185,9 +145,10 @@ Then run `node build.js` and restart Node-RED.
 
 - [Meraki Dashboard API Documentation](https://developer.cisco.com/meraki/api-v1/)
 - [Meraki API Changelog](https://developer.cisco.com/meraki/whats-new/)
-- [Meraki OpenAPI Spec (GitHub)](https://github.com/meraki/openapi/)
-- [Meraki Developer Community](https://developer.cisco.com/docs/)
+- [Meraki OpenAPI Spec (GitHub)](https://github.com/meraki/openapi)
+- [Meraki Developer Community](https://community.meraki.com/t5/Developers-Meraki-Integrations/bd-p/api)
 - [Node-RED Documentation](https://nodered.org/docs/)
+- [Creating Node-RED Nodes](https://nodered.org/docs/creating-nodes/)
 
 ## License
 
@@ -198,6 +159,6 @@ See the [LICENSE](https://github.com/bakerdist/Node-Red-Meraki-Dashboard-API-v1.
 ## Credits
 
 Originally created by [Cory Guynn](https://github.com/dexterlabora).
-Updated and maintained by [Austin Kutzer](https://github.com/Kootzer).
+Updated and maintained by [Austin Kutzer](https://github.com/AustinKutzer).
 
 The Meraki Dashboard API is developed and maintained by [Cisco Meraki](https://www.meraki.com). This node is a community project and is not officially supported by Cisco.

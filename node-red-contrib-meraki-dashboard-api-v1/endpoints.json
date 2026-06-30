@@ -364,6 +364,74 @@
     "summary": "Return the DHCP subnet information for an appliance"
   },
   {
+    "operationId": "createDeviceApplianceInterfacesPortsUpdate",
+    "method": "POST",
+    "path": "/devices/{serial}/appliance/interfaces/ports/update",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "createDeviceApplianceInterfacesPortsUpdate",
+        "in": "body",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "interfaces",
+      "ports",
+      "update"
+    ],
+    "summary": "Update configurations for an appliance's specified port",
+    "bodyExample": {
+      "interface": {
+        "slot": 1,
+        "subslot": 2,
+        "number": 3
+      },
+      "enabled": true,
+      "personality": {
+        "mode": "wan",
+        "layer": {
+          "mode": 3
+        }
+      },
+      "uplink": {
+        "type": "ethernet"
+      },
+      "downlink": {
+        "mode": "access",
+        "sgt": {
+          "id": 1234
+        },
+        "access": {
+          "vlan": "1",
+          "policy": {
+            "type": "802.1X"
+          }
+        },
+        "trunk": {
+          "nativeVlan": "2",
+          "allowedVlans": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "sgt": {
+            "enabled": false
+          }
+        }
+      }
+    }
+  },
+  {
     "operationId": "getDeviceAppliancePerformance",
     "method": "GET",
     "path": "/devices/{serial}/appliance/performance",
@@ -2018,6 +2086,275 @@
     "summary": "Return a cycle port live tool job."
   },
   {
+    "operationId": "createDeviceLiveToolsPortsStatus",
+    "method": "POST",
+    "path": "/devices/{serial}/liveTools/ports/status",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "createDeviceLiveToolsPortsStatus",
+        "in": "body",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "tags": [
+      "devices",
+      "liveTools",
+      "ports",
+      "status"
+    ],
+    "summary": "Enqueue a job to retrieve port status for a device",
+    "bodyExample": {
+      "callback": {
+        "url": "https://webhook.site/28efa24e-f830-4d9f-a12b-fbb9e5035031",
+        "sharedSecret": "secret",
+        "httpServer": {
+          "id": "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vd2ViaG9va3M="
+        },
+        "payloadTemplate": {
+          "id": "wpt_2100"
+        }
+      }
+    }
+  },
+  {
+    "operationId": "getDeviceLiveToolsPortsStatus",
+    "method": "GET",
+    "path": "/devices/{serial}/liveTools/ports/status/{jobId}",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "jobId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "tags": [
+      "devices",
+      "liveTools",
+      "ports",
+      "status"
+    ],
+    "summary": "Return a port status live tool job."
+  },
+  {
+    "operationId": "createDeviceLiveToolsPowerUsage",
+    "method": "POST",
+    "path": "/devices/{serial}/liveTools/power/usage",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "createDeviceLiveToolsPowerUsage",
+        "in": "body",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "tags": [
+      "devices",
+      "liveTools",
+      "power",
+      "usage"
+    ],
+    "summary": "Enqueues a live tool job that retrieves details about a device's overall power usage",
+    "bodyExample": {
+      "callback": {
+        "url": "https://webhook.site/28efa24e-f830-4d9f-a12b-fbb9e5035031",
+        "sharedSecret": "secret",
+        "httpServer": {
+          "id": "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vd2ViaG9va3M="
+        },
+        "payloadTemplate": {
+          "id": "wpt_2100"
+        }
+      }
+    }
+  },
+  {
+    "operationId": "getDeviceLiveToolsPowerUsage",
+    "method": "GET",
+    "path": "/devices/{serial}/liveTools/power/usage/{jobId}",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "jobId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "tags": [
+      "devices",
+      "liveTools",
+      "power",
+      "usage"
+    ],
+    "summary": "Retrieve the status and results of a previously created live tool job fetching details about a device's overall power usage."
+  },
+  {
+    "operationId": "createDeviceLiveToolsRoutingTableLookup",
+    "method": "POST",
+    "path": "/devices/{serial}/liveTools/routingTable/lookups",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "createDeviceLiveToolsRoutingTableLookup",
+        "in": "body",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "tags": [
+      "devices",
+      "liveTools",
+      "routingTable",
+      "lookups"
+    ],
+    "summary": "Enqueue a job to perform a routing table lookup request for a device",
+    "bodyExample": {
+      "type": "static",
+      "destination": {
+        "address": "192.168.0.10",
+        "subnet": "192.168.0.0/24"
+      },
+      "nextHop": {
+        "address": "10.10.0.1"
+      },
+      "vpn": {
+        "peer": {
+          "id": "N_12345678"
+        }
+      },
+      "callback": {
+        "url": "https://webhook.site/28efa24e-f830-4d9f-a12b-fbb9e5035031",
+        "sharedSecret": "secret",
+        "httpServer": {
+          "id": "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vd2ViaG9va3M="
+        },
+        "payloadTemplate": {
+          "id": "wpt_2100"
+        }
+      }
+    }
+  },
+  {
+    "operationId": "getDeviceLiveToolsRoutingTableLookup",
+    "method": "GET",
+    "path": "/devices/{serial}/liveTools/routingTable/lookups/{id}",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "tags": [
+      "devices",
+      "liveTools",
+      "routingTable",
+      "lookups"
+    ],
+    "summary": "Return a routing table live tool lookup job for a device"
+  },
+  {
+    "operationId": "createDeviceLiveToolsRoutingTableSummary",
+    "method": "POST",
+    "path": "/devices/{serial}/liveTools/routingTable/summaries",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "createDeviceLiveToolsRoutingTableSummary",
+        "in": "body",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "tags": [
+      "devices",
+      "liveTools",
+      "routingTable",
+      "summaries"
+    ],
+    "summary": "Enqueue a routing table summary job for a device",
+    "bodyExample": {
+      "callback": {
+        "url": "https://webhook.site/28efa24e-f830-4d9f-a12b-fbb9e5035031",
+        "sharedSecret": "secret",
+        "httpServer": {
+          "id": "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20vd2ViaG9va3M="
+        },
+        "payloadTemplate": {
+          "id": "wpt_2100"
+        }
+      }
+    }
+  },
+  {
+    "operationId": "getDeviceLiveToolsRoutingTableSummary",
+    "method": "GET",
+    "path": "/devices/{serial}/liveTools/routingTable/summaries/{id}",
+    "params": [
+      {
+        "name": "serial",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "tags": [
+      "devices",
+      "liveTools",
+      "routingTable",
+      "summaries"
+    ],
+    "summary": "Return the status and result of a routing table summary job"
+  },
+  {
     "operationId": "createDeviceLiveToolsThroughputTest",
     "method": "POST",
     "path": "/devices/{serial}/liveTools/throughputTest",
@@ -3250,7 +3587,7 @@
     ],
     "summary": "Update the bluetooth settings for a wireless device",
     "bodyExample": {
-      "uuid": "00000000-0000-0000-000-000000000000",
+      "uuid": "00000000-0000-0000-0000-000000000000",
       "major": 13,
       "minor": 125
     }
@@ -4771,6 +5108,118 @@
     "summary": "Return the firewall settings for this network"
   },
   {
+    "operationId": "createNetworkApplianceInterfacesL3",
+    "method": "POST",
+    "path": "/networks/{networkId}/appliance/interfaces/l3",
+    "params": [
+      {
+        "name": "networkId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "createNetworkApplianceInterfacesL3",
+        "in": "body",
+        "type": "object",
+        "required": true
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "interfaces",
+      "l3"
+    ],
+    "summary": "Create wired L3 interface",
+    "bodyExample": {
+      "port": {
+        "interface": {
+          "name": "GigabitEthernet0/0/1",
+          "slot": 0,
+          "subslot": 0,
+          "number": 1
+        }
+      },
+      "ipv4": {
+        "address": "192.0.2.1",
+        "subnet": "192.0.2.0/24"
+      }
+    }
+  },
+  {
+    "operationId": "updateNetworkApplianceInterfacesL3",
+    "method": "PUT",
+    "path": "/networks/{networkId}/appliance/interfaces/l3/{interfaceId}",
+    "params": [
+      {
+        "name": "networkId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "interfaceId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "updateNetworkApplianceInterfacesL3",
+        "in": "body",
+        "type": "object",
+        "required": false
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "interfaces",
+      "l3"
+    ],
+    "summary": "Update wired L3 interface",
+    "bodyExample": {
+      "port": {
+        "interface": {
+          "name": "GigabitEthernet0/0/1",
+          "slot": 0,
+          "subslot": 0,
+          "number": 1
+        }
+      },
+      "ipv4": {
+        "address": "192.0.2.1",
+        "subnet": "192.0.2.0/24"
+      }
+    }
+  },
+  {
+    "operationId": "deleteNetworkApplianceInterfacesL3",
+    "method": "DELETE",
+    "path": "/networks/{networkId}/appliance/interfaces/l3/{interfaceId}",
+    "params": [
+      {
+        "name": "networkId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "interfaceId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "interfaces",
+      "l3"
+    ],
+    "summary": "Delete wired L3 interface"
+  },
+  {
     "operationId": "getNetworkAppliancePorts",
     "method": "GET",
     "path": "/networks/{networkId}/appliance/ports",
@@ -4825,7 +5274,11 @@
       "type": "access",
       "vlan": 3,
       "allowedVlans": "all",
-      "accessPolicy": "open"
+      "accessPolicy": "open",
+      "sgt": {
+        "id": 1234,
+        "enabled": true
+      }
     }
   },
   {
@@ -6318,6 +6771,128 @@
     "summary": "Disconnect Umbrella account from this network"
   },
   {
+    "operationId": "exclusionsNetworkApplianceUmbrellaDomains",
+    "method": "PUT",
+    "path": "/networks/{networkId}/appliance/umbrella/domains/exclusions",
+    "params": [
+      {
+        "name": "networkId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "exclusionsNetworkApplianceUmbrellaDomains",
+        "in": "body",
+        "type": "object",
+        "required": true
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "umbrella",
+      "domains"
+    ],
+    "summary": "Specify one or more domain names to be excluded from being routed to Cisco Umbrella.",
+    "bodyExample": {
+      "domains": [
+        "example.com",
+        "example.org"
+      ]
+    }
+  },
+  {
+    "operationId": "addNetworkApplianceUmbrellaPolicies",
+    "method": "POST",
+    "path": "/networks/{networkId}/appliance/umbrella/policies/add",
+    "params": [
+      {
+        "name": "networkId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "addNetworkApplianceUmbrellaPolicies",
+        "in": "body",
+        "type": "object",
+        "required": true
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "umbrella",
+      "policies"
+    ],
+    "summary": "Add one Cisco Umbrella DNS security policy to an MX network by policy ID",
+    "bodyExample": {
+      "policy": {
+        "id": "13408726"
+      }
+    }
+  },
+  {
+    "operationId": "removeNetworkApplianceUmbrellaPolicies",
+    "method": "POST",
+    "path": "/networks/{networkId}/appliance/umbrella/policies/remove",
+    "params": [
+      {
+        "name": "networkId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "removeNetworkApplianceUmbrellaPolicies",
+        "in": "body",
+        "type": "object",
+        "required": true
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "umbrella",
+      "policies"
+    ],
+    "summary": "Remove one Cisco Umbrella DNS security policy from an MX network by policy ID",
+    "bodyExample": {
+      "policy": {
+        "id": "13408726"
+      }
+    }
+  },
+  {
+    "operationId": "protectionNetworkApplianceUmbrella",
+    "method": "PUT",
+    "path": "/networks/{networkId}/appliance/umbrella/protection",
+    "params": [
+      {
+        "name": "networkId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "protectionNetworkApplianceUmbrella",
+        "in": "body",
+        "type": "object",
+        "required": true
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "umbrella"
+    ],
+    "summary": "Enable or disable umbrella protection for an appliance network",
+    "bodyExample": {
+      "enabled": true
+    }
+  },
+  {
     "operationId": "updateNetworkApplianceUplinksNat",
     "method": "PUT",
     "path": "/networks/{networkId}/appliance/uplinks/nat",
@@ -6466,6 +7041,9 @@
           "value": "five"
         }
       ],
+      "sgt": {
+        "id": 1234
+      },
       "vrf": {
         "id": "1000"
       },
@@ -6632,6 +7210,9 @@
         "enabled": true
       },
       "adaptivePolicyGroupId": "1234",
+      "sgt": {
+        "id": 1234
+      },
       "vrf": {
         "id": "1000",
         "name": "VRF BLUE"
@@ -6831,6 +7412,9 @@
           }
         }
       ],
+      "sgt": {
+        "enabled": true
+      },
       "subnet": {
         "nat": {
           "isAllowed": true
@@ -12817,7 +13401,13 @@
           "username": "AzureDiamond",
           "passphrase": "hunter2"
         }
-      ]
+      ],
+      "authentication": {
+        "protocol": "SHA-1"
+      },
+      "privacy": {
+        "protocol": "AES-128"
+      }
     }
   },
   {
@@ -16504,7 +17094,7 @@
     "bodyExample": {
       "scanningEnabled": true,
       "advertisingEnabled": true,
-      "uuid": "00000000-0000-0000-000-000000000000",
+      "uuid": "00000000-0000-0000-0000-000000000000",
       "majorMinorAssignmentMode": "Non-unique",
       "major": 1,
       "minor": 1
@@ -19922,6 +20512,10 @@
       "redirectUrl": "https://example.com",
       "useRedirectUrl": true,
       "welcomeMessage": "Welcome!",
+      "userConsent": {
+        "required": true,
+        "message": "By continuing, you agree to our terms and conditions."
+      },
       "themeId": "c3ddcb4f16785ee747ab5ffc10867d6c8ea704be",
       "splashLogo": {
         "md5": "abcd1234",
@@ -21714,6 +22308,175 @@
     "summary": "Tracks organizations' API requests by response code across a given time period"
   },
   {
+    "operationId": "getOrganizationApplianceDevicesInterfacesL3",
+    "method": "GET",
+    "path": "/organizations/{organizationId}/appliance/devices/interfaces/l3",
+    "params": [
+      {
+        "name": "organizationId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "networkIds",
+        "in": "query",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "perPage",
+        "in": "query",
+        "type": "integer",
+        "required": false
+      },
+      {
+        "name": "startingAfter",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "endingBefore",
+        "in": "query",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "devices",
+      "interfaces",
+      "l3"
+    ],
+    "summary": "List L3 interfaces across networks for the organization"
+  },
+  {
+    "operationId": "getOrganizationApplianceDevicesInterfacesPortsByDevice",
+    "method": "GET",
+    "path": "/organizations/{organizationId}/appliance/devices/interfaces/ports/byDevice",
+    "params": [
+      {
+        "name": "organizationId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "serials",
+        "in": "query",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "interfaces",
+        "in": "query",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "numbers",
+        "in": "query",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "tags": [
+      "appliance",
+      "configure",
+      "devices",
+      "interfaces",
+      "ports",
+      "byDevice"
+    ],
+    "summary": "Returns port configurations for appliances in a given organization"
+  },
+  {
+    "operationId": "getOrganizationApplianceDevicesPortsTransceiversReadingsHistoryByDevice",
+    "method": "GET",
+    "path": "/organizations/{organizationId}/appliance/devices/ports/transceivers/readings/history/byDevice",
+    "params": [
+      {
+        "name": "organizationId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "perPage",
+        "in": "query",
+        "type": "integer",
+        "required": false
+      },
+      {
+        "name": "startingAfter",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "endingBefore",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "t0",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "t1",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "timespan",
+        "in": "query",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "interval",
+        "in": "query",
+        "type": "integer",
+        "required": false
+      },
+      {
+        "name": "networkIds",
+        "in": "query",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "serials",
+        "in": "query",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "portIds",
+        "in": "query",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "tags": [
+      "appliance",
+      "monitor",
+      "devices",
+      "ports",
+      "transceivers",
+      "readings",
+      "history",
+      "byDevice"
+    ],
+    "summary": "Return time-series digital optical monitoring (DOM) readings for ports on each DOM-enabled Catalyst appliance in an organization."
+  },
+  {
     "operationId": "getOrganizationApplianceDevicesRedundancyByNetwork",
     "method": "GET",
     "path": "/organizations/{organizationId}/appliance/devices/redundancy/byNetwork",
@@ -22403,6 +23166,76 @@
       "byNetwork"
     ],
     "summary": "List Static Multicasting forwarding settings for MX networks"
+  },
+  {
+    "operationId": "getOrganizationApplianceInterfacesPacketsOverviewsByDevice",
+    "method": "GET",
+    "path": "/organizations/{organizationId}/appliance/interfaces/packets/overviews/byDevice",
+    "params": [
+      {
+        "name": "organizationId",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "t0",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "t1",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "timespan",
+        "in": "query",
+        "type": "number",
+        "required": false
+      },
+      {
+        "name": "perPage",
+        "in": "query",
+        "type": "integer",
+        "required": false
+      },
+      {
+        "name": "startingAfter",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "endingBefore",
+        "in": "query",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "networkIds",
+        "in": "query",
+        "type": "array",
+        "required": false
+      },
+      {
+        "name": "serials",
+        "in": "query",
+        "type": "array",
+        "required": false
+      }
+    ],
+    "tags": [
+      "appliance",
+      "monitor",
+      "interfaces",
+      "packets",
+      "overviews",
+      "byDevice"
+    ],
+    "summary": "Returns packet counter overviews for all interfaces on Secure Routers in the organization, including totals and average rates by packet type over the requested timespan."
   },
   {
     "operationId": "updateOrganizationApplianceRoutingVrfsSettings",
@@ -29286,6 +30119,7 @@
         "192.195.83.1",
         "192.195.83.255"
       ],
+      "enforceLockedIpSessions": true,
       "apiAuthentication": {
         "ipRestrictionsForKeys": {
           "enabled": true,
@@ -35233,7 +36067,7 @@
       "certificates",
       "authorities"
     ],
-    "summary": "Create an organization's RADSEC device Certificate Authority (CA)"
+    "summary": "Create an organization's RadSec device Certificate Authority (CA)"
   },
   {
     "operationId": "updateOrganizationWirelessDevicesRadsecCertificatesAuthorities",
@@ -35261,7 +36095,7 @@
       "certificates",
       "authorities"
     ],
-    "summary": "Update an organization's RADSEC device Certificate Authority (CA) state",
+    "summary": "Update an organization's RadSec device Certificate Authority (CA) state",
     "bodyExample": {
       "status": "trusted",
       "certificateAuthorityId": "1234"
@@ -35293,7 +36127,7 @@
       "certificates",
       "authorities"
     ],
-    "summary": "Query for details on the organization's RADSEC device Certificate Authority certificates (CAs)"
+    "summary": "Query for details on the organization's RadSec device Certificate Authority certificates (CAs)"
   },
   {
     "operationId": "getOrganizationWirelessDevicesRadsecCertificatesAuthoritiesCrls",
@@ -35322,7 +36156,7 @@
       "authorities",
       "crls"
     ],
-    "summary": "Query for certificate revocation list (CRL) for the organization's RADSEC device Certificate Authorities (CAs)."
+    "summary": "Query for certificate revocation list (CRL) for the organization's RadSec device Certificate Authorities (CAs)."
   },
   {
     "operationId": "getOrganizationWirelessDevicesRadsecCertificatesAuthoritiesCrlsDeltas",
@@ -35352,7 +36186,7 @@
       "crls",
       "deltas"
     ],
-    "summary": "Query for all delta certificate revocation list (CRL) for the organization's RADSEC device Certificate Authority (CA) with the given id."
+    "summary": "Query for all delta certificate revocation list (CRL) for the organization's RadSec device Certificate Authority (CA) with the given id."
   },
   {
     "operationId": "getOrganizationWirelessDevicesSystemCpuLoadHistory",
